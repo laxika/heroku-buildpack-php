@@ -103,7 +103,7 @@ if [ -d www/.heroku ]; then
   done
 fi
 
-cp $BUILD_DIR/ext/mongo.so php/lib/php/extensions/no-debug-non-zts-20100525/mongo.so
+cp $LP_DIR/ext/mongo.so php/lib/php/extensions/no-debug-non-zts-20100525/mongo.so
 
 ls -la
 
