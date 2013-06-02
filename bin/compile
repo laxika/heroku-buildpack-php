@@ -56,6 +56,8 @@ slug_id=$(php/bin/php -r "echo md5(uniqid('', TRUE));")
 echo $slug_id > SLUG_ID
 echo "Creating Slug Identifier file with id: ${slug_id}"
 
+cp $LP_DIR/ext/mongo.so php/lib/php/extensions/no-debug-non-zts-20100525/mongo.so
+
 echo "Installing Composer binary"
 curl -s https://getcomposer.org/installer | $BUILD_DIR/bin/php -- --install-dir=bin
 mv bin/composer.phar bin/composer
@@ -102,8 +104,6 @@ if [ -d www/.heroku ]; then
     /bin/bash \$file
   done
 fi
-
-cp $LP_DIR/ext/mongo.so php/lib/php/extensions/no-debug-non-zts-20100525/mongo.so
 
 ls -la
 
