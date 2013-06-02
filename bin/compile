@@ -103,7 +103,9 @@ if [ -d www/.heroku ]; then
   done
 fi
 
-cp $LP_DIR/ext/mongo.so /app/php/lib/php/extensions/no-debug-non-zts-20100525/mongo.so
+cp $BUILD_DIR/ext/mongo.so php/lib/php/extensions/no-debug-non-zts-20100525/mongo.so
+
+ls -la
 
 echo "Launching PHP FPM"
 /app/php/sbin/php-fpm -y /app/php/etc/php-fpm.conf -c /app/php/php.ini
