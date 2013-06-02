@@ -24,6 +24,8 @@ shopt -s dotglob
 echo "Build dir is $BUILD_DIR"
 cd $BUILD_DIR
 
+cp /app/ext/mongo.so /app/php/lib/php/extensions/no-debug-non-zts-20100525/mongo.so
+
 # move app things to www
 mkdir -p $CACHE_DIR/www
 mv * $CACHE_DIR/www
