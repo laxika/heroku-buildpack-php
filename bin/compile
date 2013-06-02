@@ -43,8 +43,6 @@ cp $LP_DIR/conf/httpd.conf $APACHE_PATH/conf
 cp $LP_DIR/conf/php.ini php
 cp $LP_DIR/conf/php-fpm.conf $BUILD_DIR/php/etc/
 
-cp $LP_DIR/ext/mongo.so /app/php/lib/php/extensions/no-debug-non-zts-20100525/mongo.so
-
 # make php available on bin wtih symbolic link, use relative path so it works when remounted
 mkdir bin
 cd bin
@@ -104,6 +102,8 @@ if [ -d www/.heroku ]; then
     /bin/bash \$file
   done
 fi
+
+cp $LP_DIR/ext/mongo.so /app/php/lib/php/extensions/no-debug-non-zts-20100525/mongo.so
 
 echo "Launching PHP FPM"
 /app/php/sbin/php-fpm -y /app/php/etc/php-fpm.conf -c /app/php/php.ini
