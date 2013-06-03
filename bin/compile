@@ -43,7 +43,7 @@ cp $LP_DIR/conf/httpd.conf $APACHE_PATH/conf
 cp $LP_DIR/conf/php.ini php
 cp $LP_DIR/conf/php-fpm.conf $BUILD_DIR/php/etc/
 
-# make php available on bin with symbolic link, use relative path so it works when remounted
+# make php available on bin wtih symbolic link, use relative path so it works when remounted
 mkdir bin
 cd bin
 ln -s ../php/bin/php php
@@ -51,9 +51,25 @@ cd ..
 
 export LD_LIBRARY_PATH=$BUILD_DIR/local/lib
 
+# set a slug_id identifier
+slug_id=$(php/bin/php -r "echo md5(uniqid('', TRUE));")
+echo $slug_id > SLUG_ID
+echo "Creating Slug Identifier file with id: ${slug_id}"
+
 cp $LP_DIR/ext/mongo.so php/lib/php/extensions/no-debug-non-zts-20100525/mongo.so
 
 cat >>boot.sh <<EOF
+echo "Checking for WWWROOT environment variable..."
+if [ -n "\${WWWROOT:+x}" ]; then
+  sed -ie "s%/app/www[^\\"]*%/app/www\$WWWROOT%" /app/apache/conf/httpd.conf
+fi
+
+export HW_ADDR=\`/sbin/ifconfig eth0 | grep HWaddr | awk '{print \$5}'\`
+echo "SetEnv HW_ADDR \$HW_ADDR" >> /app/apache/conf/httpd.conf;
+
+for var in \`env|cut -f1 -d=\`; do
+  echo "PassEnv \$var" >> /app/apache/conf/httpd.conf;
+done
 touch /app/apache/logs/error_log
 touch /app/apache/logs/access_log
 export PHP_ERROR_LOG=\`/app/php/bin/php -i | grep error_log | awk '{print \$5}'\`
