@@ -58,17 +58,6 @@ echo "Creating Slug Identifier file with id: ${slug_id}"
 
 cp $LP_DIR/ext/mongo.so php/lib/php/extensions/no-debug-non-zts-20100525/mongo.so
 
-echo "Installing Composer binary"
-curl -s https://getcomposer.org/installer | $BUILD_DIR/bin/php -- --install-dir=bin
-mv bin/composer.phar bin/composer
-
-if [ -f $BUILD_DIR/www/composer.json ]; then
-  echo "Installing Composer dependencies"
-  cd $BUILD_DIR/www
-  $BUILD_DIR/bin/php $BUILD_DIR/bin/composer install --prefer-dist
-  cd $BUILD_DIR
-fi
-
 cat >>boot.sh <<EOF
 echo "Checking for WWWROOT environment variable..."
 if [ -n "\${WWWROOT:+x}" ]; then
@@ -92,21 +81,6 @@ tail -F \$PHP_ERROR_LOG &
 export LD_LIBRARY_PATH=/app/local/lib
 # export PHP_INI_SCAN_DIR=/app/php
 
-# let's check for hook scripts
-# .hooks will be DEPRECATED soon in favor of .heroku
-if [ -d www/.hooks ]; then
-  for file in www/.hooks/*.sh; do
-    /bin/bash \$file
-  done
-fi
-if [ -d www/.heroku ]; then
-  for file in www/.heroku/*.sh; do
-    /bin/bash \$file
-  done
-fi
-
-ls -la
-
 echo "Launching PHP FPM"
 /app/php/sbin/php-fpm -y /app/php/etc/php-fpm.conf -c /app/php/php.ini
 
@@ -118,17 +92,3 @@ chmod +x boot.sh
 
 # clean the cache
 rm -rf $CACHE_DIR/*
-
-# run a post build script from the app
-# .hooks will be DEPRECATED soon in favor of .heroku
-if [ -d $BUILD_DIR/www/.hooks -a -f $BUILD_DIR/www/.hooks/build.sh ]; then
-    chmod 0755 $BUILD_DIR/www/.hooks/build.sh
-    /usr/bin/env bash $BUILD_DIR/www/.hooks/build.sh
-    rm $BUILD_DIR/www/.hooks/build.sh
-fi
-
-if [ -d $BUILD_DIR/www/.heroku -a -f $BUILD_DIR/www/.heroku/compile.sh ]; then
-    chmod 0755 $BUILD_DIR/www/.heroku/compile.sh
-    /usr/bin/env bash $BUILD_DIR/www/.heroku/compile.sh
-    rm $BUILD_DIR/www/.heroku/compile.sh
-fi
