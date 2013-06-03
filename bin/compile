@@ -54,17 +54,6 @@ export LD_LIBRARY_PATH=$BUILD_DIR/local/lib
 cp $LP_DIR/ext/mongo.so php/lib/php/extensions/no-debug-non-zts-20100525/mongo.so
 
 cat >>boot.sh <<EOF
-echo "Checking for WWWROOT environment variable..."
-if [ -n "\${WWWROOT:+x}" ]; then
-  sed -ie "s%/app/www[^\\"]*%/app/www\$WWWROOT%" /app/apache/conf/httpd.conf
-fi
-
-export HW_ADDR=\`/sbin/ifconfig eth0 | grep HWaddr | awk '{print \$5}'\`
-echo "SetEnv HW_ADDR \$HW_ADDR" >> /app/apache/conf/httpd.conf;
-
-for var in \`env|cut -f1 -d=\`; do
-  echo "PassEnv \$var" >> /app/apache/conf/httpd.conf;
-done
 touch /app/apache/logs/error_log
 touch /app/apache/logs/access_log
 export PHP_ERROR_LOG=\`/app/php/bin/php -i | grep error_log | awk '{print \$5}'\`
